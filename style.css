@@ -497,14 +497,42 @@ body {
 }
 
 .ad-slot {
-  flex: 1 1 auto;
-  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* Desktop bottom ad — fills remaining space in bottombar */
+.ad-slot-desktop-bottom {
+  flex: 1 1 auto;
+  min-height: 50px;
   border-radius: 8px;
   margin-left: 12px;
-  overflow: hidden;
+}
+
+/* Mobile top sticky ad — full width, fixed height, sits above topbar */
+.ad-slot-mobile-top {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 50px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.ad-slot-mobile-top ins {
+  display: block;
+  width: 100%;
+  height: 50px;
+}
+
+/* Visibility: mobile vs desktop */
+@media (min-width: 720px) {
+  .ad-slot-mobile-top { display: none !important; }
+}
+@media (max-width: 719px) {
+  .ad-slot-desktop-bottom { display: none !important; }
+  /* On mobile, bottombar collapses to just the New Sheet button */
+  .bottombar { justify-content: flex-end; }
 }
 
 @media (max-width: 480px) {
