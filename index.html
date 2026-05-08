@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0d1117" />
+  <title>Snap Bubbles — Virtual Bubble Wrap</title>
+  <meta name="description" content="Pop virtual bubble wrap online. Zen, Speed, or Survival mode. Free, no install." />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Snap Bubbles" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- GA4: replace G-XXXXXXXXXX with measurement ID once provisioned -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+  <!-- <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script> -->
+
+  <!-- AdSense: account ca-pub-6647695511145371 -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6647695511145371" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="brand-name">Snap Bubbles</span>
+    </div>
+    <div class="modes" role="tablist" aria-label="Game mode">
+      <button class="mode-btn is-active" data-mode="zen" role="tab" aria-selected="true">Zen</button>
+      <button class="mode-btn" data-mode="speed" role="tab" aria-selected="false">Speed</button>
+      <button class="mode-btn" data-mode="survival" role="tab" aria-selected="false">Survival</button>
+    </div>
+  </header>
+
+  <section class="stats" aria-live="polite">
+    <div class="stat" data-stat="popped"><span class="stat-label">Popped</span><span class="stat-value" id="popped">0</span></div>
+    <div class="stat" data-stat="timer" hidden><span class="stat-label">Time</span><span class="stat-value" id="timer">0.00s</span></div>
+    <div class="stat" data-stat="target" hidden><span class="stat-label">Target</span><span class="stat-value" id="target">50</span></div>
+    <div class="stat" data-stat="best" hidden><span class="stat-label">Best</span><span class="stat-value" id="best">—</span></div>
+    <div class="stat" data-stat="level" hidden><span class="stat-label">Level</span><span class="stat-value" id="level">1</span></div>
+    <div class="stat" data-stat="score" hidden><span class="stat-label">Score</span><span class="stat-value" id="score">0</span></div>
+  </section>
+
+  <div id="countdown" class="countdown" hidden aria-hidden="true">
+    <div class="countdown-fill"></div>
+    <div class="countdown-text"><span id="countdown-seconds">30.0</span>s</div>
+  </div>
+
+  <main class="game">
+    <div id="grid" class="grid" aria-label="Bubble wrap"></div>
+
+    <div id="overlay" class="overlay" hidden>
+      <div class="overlay-card">
+        <h2 id="overlay-title">Nice!</h2>
+        <p id="overlay-body">You popped 50 bubbles in 8.42s.</p>
+        <div class="overlay-actions">
+          <button id="overlay-again" class="btn btn-primary">Play Again</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="level-toast" class="level-toast" hidden></div>
+    <div id="mode-toast" class="mode-toast" hidden></div>
+  </main>
+
+  <footer class="bottombar">
+    <button id="new-sheet" class="btn btn-ghost" aria-label="New sheet of bubbles">New Sheet</button>
+    <div class="ad-slot" aria-hidden="true">
+      <!-- Anchor banner ad unit — replace data-ad-slot with the slot ID from AdSense dashboard -->
+      <ins class="adsbygoogle"
+           style="display:block; width:100%; height:100%;"
+           data-ad-client="ca-pub-6647695511145371"
+           data-ad-slot="REPLACE_WITH_SLOT_ID"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </footer>
+
+  <script src="game.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
