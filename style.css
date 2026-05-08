@@ -496,6 +496,16 @@ body {
   flex: 0 0 auto;
 }
 
+.footer-link {
+  color: var(--ink-dim);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.footer-link:hover { color: var(--ink); }
+
 .ad-slot {
   display: flex;
   align-items: center;
@@ -543,4 +553,92 @@ body {
   .stat-value { font-size: 16px; }
   .topbar { padding: 10px 12px; }
   .bottombar { padding: 8px 12px; }
+}
+
+/* ---------- Article / how-to-play page ---------- */
+.article-body {
+  display: block;
+  min-height: auto;
+}
+
+.article-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.article-topbar .brand {
+  text-decoration: none;
+  color: var(--ink);
+}
+.article-nav .btn-primary {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+.article h1 {
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+.article h2 {
+  font-size: 22px;
+  margin: 36px 0 8px;
+  letter-spacing: -0.01em;
+}
+.article h3 {
+  font-size: 17px;
+  margin: 24px 0 4px;
+  color: var(--accent);
+}
+.article p {
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.article .lede {
+  font-size: 17px;
+  color: var(--ink-dim);
+  margin-bottom: 24px;
+}
+.article ul {
+  margin: 8px 0 18px;
+  padding-left: 22px;
+}
+.article li {
+  margin-bottom: 6px;
+}
+.article strong {
+  color: var(--ink);
+}
+.article-cta {
+  margin-top: 40px;
+  text-align: center;
+}
+.btn-lg {
+  font-size: 16px;
+  padding: 14px 28px;
+}
+.article-cta .btn {
+  text-decoration: none;
+  display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .article-topbar { padding: 12px 16px; }
+  .article { padding: 20px 16px 60px; }
+  .article h1 { font-size: 28px; }
+  .article h2 { font-size: 19px; }
 }

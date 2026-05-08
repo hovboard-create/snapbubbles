@@ -4,8 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0d1117" />
-  <title>Snap Bubbles — Virtual Bubble Wrap</title>
-  <meta name="description" content="Pop virtual bubble wrap online. Zen, Speed, or Survival mode. Free, no install." />
+  <title>Snap Bubbles — Virtual Bubble Wrap Game (Free, Online)</title>
+  <meta name="description" content="Free virtual bubble wrap online. Pop bubbles to relax in Zen mode, race the clock in Speed mode, or beat the countdown in Survival mode. No download, plays in your browser." />
+  <link rel="canonical" href="https://snapbubbles.com/" />
 
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
@@ -14,6 +15,49 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Snap Bubbles" />
   <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://snapbubbles.com/" />
+  <meta property="og:title" content="Snap Bubbles — Virtual Bubble Wrap Game" />
+  <meta property="og:description" content="Pop virtual bubble wrap online. Zen, Speed, or Survival mode. Free, no install." />
+  <meta property="og:image" content="https://snapbubbles.com/icons/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Snap Bubbles" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://snapbubbles.com/" />
+  <meta name="twitter:title" content="Snap Bubbles — Virtual Bubble Wrap Game" />
+  <meta name="twitter:description" content="Pop virtual bubble wrap online. Three modes. Free, no install." />
+  <meta name="twitter:image" content="https://snapbubbles.com/icons/og-image.png" />
+
+  <!-- JSON-LD: VideoGame schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Snap Bubbles",
+    "url": "https://snapbubbles.com/",
+    "description": "Free online virtual bubble wrap. Three modes: Zen, Speed, Survival.",
+    "image": "https://snapbubbles.com/icons/og-image.png",
+    "genre": ["Casual", "Puzzle", "Arcade"],
+    "applicationCategory": "Game",
+    "operatingSystem": "Web Browser",
+    "isAccessibleForFree": true,
+    "playMode": "SinglePlayer",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Snap Bubbles"
+    }
+  }
+  </script>
 
   <!-- GA4: replace G-XXXXXXXXXX with measurement ID once provisioned -->
   <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
@@ -78,6 +122,7 @@
   </main>
 
   <footer class="bottombar">
+    <a class="footer-link" href="/how-to-play.html">How to Play</a>
     <button id="new-sheet" class="btn btn-ghost" aria-label="New sheet of bubbles">New Sheet</button>
     <div class="ad-slot ad-slot-desktop-bottom" aria-hidden="true">
       <!-- Desktop-only bottom ad — auto format -->

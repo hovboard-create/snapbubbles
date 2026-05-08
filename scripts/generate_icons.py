@@ -99,6 +99,78 @@ def draw_bubble(size, *, padding_ratio=0.10, with_bg=True, with_glow=True):
     return img
 
 
+def draw_og_image(width=1200, height=630):
+    """Open Graph image for social sharing — bubble wrap field with wordmark."""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 255))
+    draw = ImageDraw.Draw(img)
+
+    # Background gradient — same teal as the game
+    for y in range(height):
+        t = y / height
+        r = int(lerp(0x2c, 0x0a, t))
+        g = int(lerp(0x73, 0x2c, t))
+        b = int(lerp(0x82, 0x36, t))
+        draw.line([(0, y), (width, y)], fill=(r, g, b, 255))
+
+    # Tile bubbles across the surface
+    bubble_size = 110
+    gap = 6
+    cols = width // (bubble_size + gap) + 2
+    rows = height // (bubble_size + gap) + 2
+    bubble = draw_bubble(bubble_size, padding_ratio=0.04, with_bg=False, with_glow=False)
+    for r in range(rows):
+        for c in range(cols):
+            x = c * (bubble_size + gap)
+            y = r * (bubble_size + gap)
+            img.alpha_composite(bubble, (x, y))
+
+    # Darken right side for text contrast
+    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    for x in range(width):
+        t = max(0.0, (x / width - 0.25) / 0.75)
+        a = int(t * t * 200)
+        od.line([(x, 0), (x, height)], fill=(8, 25, 35, a))
+    img = Image.alpha_composite(img, overlay)
+
+    # Wordmark text — "Snap Bubbles" + tagline
+    draw = ImageDraw.Draw(img)
+    title = "Snap Bubbles"
+    tagline = "Virtual Bubble Wrap"
+    sub = "Zen / Speed / Survival"
+
+    # Try to load nicer fonts; fall back to default
+    title_font = None
+    tagline_font = None
+    sub_font = None
+    candidate_fonts = [
+        "/System/Library/Fonts/SFNS.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/System/Library/Fonts/Avenir Next.ttc",
+    ]
+    for path in candidate_fonts:
+        if os.path.exists(path):
+            try:
+                from PIL import ImageFont
+                title_font = ImageFont.truetype(path, 110)
+                tagline_font = ImageFont.truetype(path, 46)
+                sub_font = ImageFont.truetype(path, 32)
+                break
+            except Exception:
+                continue
+
+    title_x = width * 0.55
+    title_y = height * 0.36
+    if title_font:
+        draw.text((title_x, title_y), title, fill=(255, 255, 255, 255), font=title_font)
+        draw.text((title_x, title_y + 130), tagline, fill=(190, 220, 235, 255), font=tagline_font)
+        draw.text((title_x, title_y + 200), sub, fill=(140, 180, 200, 220), font=sub_font)
+    else:
+        draw.text((title_x, title_y), title, fill=(255, 255, 255, 255))
+
+    return img
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
 
@@ -118,8 +190,12 @@ def main():
     masked = draw_bubble(512, padding_ratio=0.04, with_bg=True, with_glow=False)
     masked.save(os.path.join(OUT, "icon-512-maskable.png"), optimize=True)
 
+    # Open Graph image (social share preview) 1200x630
+    og = draw_og_image(1200, 630)
+    og.convert("RGB").save(os.path.join(OUT, "og-image.png"), optimize=True)
+
     print("Generated:")
-    for name in ("apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png"):
+    for name in ("apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png", "og-image.png"):
         path = os.path.join(OUT, name)
         size = os.path.getsize(path)
         print(f"  {name}  {size/1024:.1f} KB")

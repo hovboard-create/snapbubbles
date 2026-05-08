@@ -1,7 +1,8 @@
-const CACHE = 'snapbubbles-v2';
+const CACHE = 'snapbubbles-v3';
 const ASSETS = [
   './',
   './index.html',
+  './how-to-play.html',
   './style.css',
   './game.js',
   './manifest.webmanifest',
@@ -10,6 +11,7 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
+  './icons/og-image.png',
 ];
 
 self.addEventListener('install', (event) => {
