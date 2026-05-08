@@ -133,16 +133,20 @@ def draw_og_image(width=1200, height=630):
         od.line([(x, 0), (x, height)], fill=(8, 25, 35, a))
     img = Image.alpha_composite(img, overlay)
 
-    # Wordmark text — "Snap Bubbles" + tagline
+    # Wordmark text — "Snap Bubbles" + tagline + CTA button
     draw = ImageDraw.Draw(img)
     title = "Snap Bubbles"
     tagline = "Virtual Bubble Wrap"
     sub = "Zen / Speed / Survival"
+    cta = "Play Free →"
+    cta_url = "snapbubbles.com"
 
     # Try to load nicer fonts; fall back to default
     title_font = None
     tagline_font = None
     sub_font = None
+    cta_font = None
+    url_font = None
     candidate_fonts = [
         "/System/Library/Fonts/SFNS.ttf",
         "/System/Library/Fonts/Helvetica.ttc",
@@ -155,16 +159,42 @@ def draw_og_image(width=1200, height=630):
                 title_font = ImageFont.truetype(path, 110)
                 tagline_font = ImageFont.truetype(path, 46)
                 sub_font = ImageFont.truetype(path, 32)
+                cta_font = ImageFont.truetype(path, 38)
+                url_font = ImageFont.truetype(path, 24)
                 break
             except Exception:
                 continue
 
-    title_x = width * 0.55
-    title_y = height * 0.36
+    title_x = int(width * 0.55)
+    title_y = int(height * 0.30)
     if title_font:
         draw.text((title_x, title_y), title, fill=(255, 255, 255, 255), font=title_font)
         draw.text((title_x, title_y + 130), tagline, fill=(190, 220, 235, 255), font=tagline_font)
         draw.text((title_x, title_y + 200), sub, fill=(140, 180, 200, 220), font=sub_font)
+
+        # CTA pill — rounded button with "Play Free →"
+        cta_x0 = title_x
+        cta_y0 = title_y + 280
+        cta_w = 280
+        cta_h = 76
+        draw.rounded_rectangle(
+            (cta_x0, cta_y0, cta_x0 + cta_w, cta_y0 + cta_h),
+            radius=14,
+            fill=(47, 129, 247, 255),
+        )
+        # Center text within pill
+        try:
+            bbox = draw.textbbox((0, 0), cta, font=cta_font)
+            tw = bbox[2] - bbox[0]
+            th = bbox[3] - bbox[1]
+        except Exception:
+            tw, th = cta_font.getsize(cta) if cta_font else (140, 38)
+        tx = cta_x0 + (cta_w - tw) // 2
+        ty = cta_y0 + (cta_h - th) // 2 - 4
+        draw.text((tx, ty), cta, fill=(255, 255, 255, 255), font=cta_font)
+
+        # URL line below the CTA
+        draw.text((title_x, cta_y0 + cta_h + 16), cta_url, fill=(160, 200, 220, 200), font=url_font)
     else:
         draw.text((title_x, title_y), title, fill=(255, 255, 255, 255))
 
