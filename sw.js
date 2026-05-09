@@ -1,8 +1,12 @@
-const CACHE = 'snapbubbles-v4';
+const CACHE = 'snapbubbles-v5';
 const ASSETS = [
   './',
   './index.html',
   './how-to-play.html',
+  './articles.html',
+  './why-popping-bubble-wrap-relieves-stress.html',
+  './history-of-bubble-wrap.html',
+  './bubble-wrap-for-adhd-anxiety.html',
   './style.css',
   './game.js',
   './manifest.webmanifest',
