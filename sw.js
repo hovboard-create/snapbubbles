@@ -1,4 +1,4 @@
-const CACHE = 'snapbubbles-v5';
+const CACHE = 'snapbubbles-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,13 @@ const ASSETS = [
   './why-popping-bubble-wrap-relieves-stress.html',
   './history-of-bubble-wrap.html',
   './bubble-wrap-for-adhd-anxiety.html',
+  './bubble-wrap-appreciation-day.html',
+  './best-stress-relief-games-for-work.html',
+  './bubble-wrap-for-kids-safety.html',
+  './bubble-wrap-vs-fidget-toys.html',
+  './why-bubble-wrap-makes-pop-sound.html',
+  './bubble-wrap-stimming.html',
+  './asmr-and-bubble-wrap.html',
   './style.css',
   './game.js',
   './manifest.webmanifest',
