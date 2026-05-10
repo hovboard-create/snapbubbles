@@ -11,6 +11,66 @@
   const SURVIVAL_MIN_BUBBLES = 8;
   const BEST_SPEED_KEY = 'snapbubbles.bestTime.v1';
   const BEST_SURVIVAL_KEY = 'snapbubbles.bestSurvival.v1';
+  const DAILY_KEY_PREFIX = 'snapbubbles.daily.';
+
+  // -------- Seeded RNG (Mulberry32) --------
+  // Used for Daily mode and shareable challenge URLs so the same seed
+  // produces the same bubble layout for everyone.
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  let _rng = Math.random;
+  function rng() { return _rng(); }
+  function setSeed(seed) {
+    _rng = (seed === null || seed === undefined) ? Math.random : mulberry32(seed >>> 0);
+  }
+
+  // YYYYMMDD as a 32-bit integer — same for all players in same UTC day
+  function dailySeed(date) {
+    date = date || new Date();
+    return date.getUTCFullYear() * 10000 + (date.getUTCMonth() + 1) * 100 + date.getUTCDate();
+  }
+  function dailyDateLabel(date) {
+    date = date || new Date();
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function dailyKeyForToday() {
+    const d = new Date();
+    return `${DAILY_KEY_PREFIX}${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  }
+
+  function encodeSeed(s) { return (s >>> 0).toString(36); }
+  function decodeSeed(s) { return parseInt(s, 36) >>> 0; }
+
+  // Parse incoming challenge URL: /?c=<m><seed>x<value>
+  // m: 's' = speed, 'v' = survival
+  function parseChallengeFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const c = params.get('c');
+      if (!c || c.length < 4) return null;
+      const m = c[0];
+      const mode = m === 's' ? 'speed' : m === 'v' ? 'survival' : null;
+      if (!mode) return null;
+      const parts = c.slice(1).split('x');
+      if (parts.length !== 2) return null;
+      const seed = decodeSeed(parts[0]);
+      const value = parseFloat(parts[1]);
+      if (!isFinite(value)) return null;
+      return { mode, seed, value };
+    } catch (_) { return null; }
+  }
+
+  function buildShareUrl(mode, seed, value) {
+    const m = mode === 'speed' ? 's' : 'v';
+    const v = mode === 'speed' ? value.toFixed(2) : String(Math.round(value));
+    return `${window.location.origin}/?c=${m}${encodeSeed(seed)}x${v}`;
+  }
 
   // Per-level Survival config: drain rate, gold %, poison %, bubble min size, count multiplier
   function levelConfig(level) {
@@ -47,12 +107,18 @@
   const countdownSeconds = $('countdown-seconds');
   const levelToast = $('level-toast');
   const modeToast = $('mode-toast');
+  const overlayShare = $('overlay-share');
+  const challengeIntro = $('challenge-intro');
+  const challengeTitle = $('challenge-title');
+  const challengeBody = $('challenge-body');
+  const challengeAccept = $('challenge-accept');
   let modeToastTimer = null;
 
   const MODE_INFO = {
     zen: { title: 'Zen', desc: 'Just pop bubbles. The sheet refills itself — no goal, no timer.' },
     speed: { title: 'Speed', desc: 'Race to pop 50 bubbles. Your best time saves automatically.' },
     survival: { title: 'Survival', desc: 'Beat the countdown. Blue +0.5s, gold +5s, green poison −3s.' },
+    daily: { title: 'Daily Challenge', desc: 'Same 50 bubbles for everyone today. Race the clock.' },
   };
   const statTimer = document.querySelector('[data-stat="timer"]');
   const statTarget = document.querySelector('[data-stat="target"]');
@@ -74,6 +140,9 @@
     drainLastTs: null,
     bubbleCount: 0,
     isOver: false,
+    seed: null,                     // when set, RNG is deterministic (daily / challenge)
+    challenge: null,                // {mode, seed, value} from URL ?c=...
+    lastFinalValue: null,           // last completed score/time, for share button
   };
 
   // -------- Audio --------
@@ -182,7 +251,7 @@
   }
 
   function pickBubbleType(cfg) {
-    const r = Math.random();
+    const r = rng();
     if (r < cfg.poisonPct) return 'poison';
     if (r < cfg.poisonPct + cfg.goldPct) return 'gold';
     return 'blue';
@@ -240,17 +309,22 @@
     modeToastTimer = setTimeout(() => { modeToast.hidden = true; }, 3000);
   }
 
+  function isSpeedLike(mode) { return mode === 'speed' || mode === 'daily'; }
+
   function applyMode(mode, showToast) {
     state.mode = mode;
+    state.challenge = null; // user-initiated mode change exits any active challenge
+    state.seed = (mode === 'daily') ? dailySeed() : null;
+
     modeButtons.forEach((btn) => {
       const active = btn.dataset.mode === mode;
       btn.classList.toggle('is-active', active);
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
     });
 
-    statTimer.hidden = (mode !== 'speed' && mode !== 'survival');
-    statTarget.hidden = (mode !== 'speed');
-    statBest.hidden = (mode !== 'speed' && mode !== 'survival');
+    statTimer.hidden = !(isSpeedLike(mode) || mode === 'survival');
+    statTarget.hidden = (mode !== 'speed' && mode !== 'daily');
+    statBest.hidden = !(isSpeedLike(mode) || mode === 'survival');
     statLevel.hidden = (mode !== 'survival');
     statScore.hidden = (mode !== 'survival');
     countdown.hidden = (mode !== 'survival');
@@ -258,6 +332,10 @@
     if (mode === 'speed') {
       targetEl.textContent = String(SPEED_TARGET);
       renderBest('speed');
+    }
+    if (mode === 'daily') {
+      targetEl.textContent = String(SPEED_TARGET);
+      renderBest('daily');
     }
     if (mode === 'survival') {
       renderBest('survival');
@@ -269,6 +347,9 @@
   function renderBest(which) {
     if (which === 'speed') {
       const raw = localStorage.getItem(BEST_SPEED_KEY);
+      bestEl.textContent = raw ? `${parseFloat(raw).toFixed(2)}s` : '—';
+    } else if (which === 'daily') {
+      const raw = localStorage.getItem(dailyKeyForToday());
       bestEl.textContent = raw ? `${parseFloat(raw).toFixed(2)}s` : '—';
     } else {
       const raw = localStorage.getItem(BEST_SURVIVAL_KEY);
@@ -320,8 +401,22 @@
   }
 
   // -------- Round lifecycle --------
+  function regenerateSeedIfApplicable() {
+    // Keep deterministic seeds for: active challenge, daily mode
+    if (state.challenge) return;
+    if (state.mode === 'daily') return;
+    // Speed and Survival get a fresh random seed each round so
+    // share URLs produce the exact same grid the player just saw
+    if (state.mode === 'speed' || state.mode === 'survival') {
+      state.seed = (Math.random() * 0xFFFFFFFF) >>> 0;
+    } else {
+      state.seed = null;
+    }
+  }
+
   function resetRound() {
     stopTimer();
+    regenerateSeedIfApplicable();
     state.popped = 0;
     state.levelPops = 0;
     state.score = 0;
@@ -330,8 +425,9 @@
     state.startTime = null;
     state.drainLastTs = null;
     state.isOver = false;
+    state.lastFinalValue = null;
     poppedEl.textContent = '0';
-    if (state.mode === 'speed') timerEl.textContent = '0.00s';
+    if (isSpeedLike(state.mode)) timerEl.textContent = '0.00s';
     if (state.mode === 'survival') {
       timerEl.textContent = `${SURVIVAL_START_TIME.toFixed(1)}s`;
       levelEl.textContent = '1';
@@ -339,6 +435,9 @@
       renderCountdown();
     }
     overlay.hidden = true;
+    // Re-seed RNG so daily/challenge replays produce same layout,
+    // and speed/survival shares match what the player saw
+    setSeed(state.seed);
     buildGrid();
   }
 
@@ -380,7 +479,7 @@
 
     if (state.mode === 'survival') {
       handleSurvivalPop(target, type);
-    } else if (state.mode === 'speed') {
+    } else if (isSpeedLike(state.mode)) {
       handleSpeedPop();
     } else {
       handleZenPop();
@@ -452,19 +551,46 @@
     stopTimer();
     state.isOver = true;
     const elapsed = (performance.now() - state.startTime) / 1000;
+    state.lastFinalValue = elapsed;
     timerEl.textContent = `${elapsed.toFixed(2)}s`;
 
-    const prevBest = parseFloat(localStorage.getItem(BEST_SPEED_KEY) || 'Infinity');
-    const isNewBest = elapsed < prevBest;
-    if (isNewBest) {
-      localStorage.setItem(BEST_SPEED_KEY, elapsed.toFixed(3));
-      renderBest('speed');
+    let title, body;
+
+    if (state.mode === 'daily') {
+      const key = dailyKeyForToday();
+      const prevBest = parseFloat(localStorage.getItem(key) || 'Infinity');
+      const isNewBest = elapsed < prevBest;
+      if (isNewBest) {
+        localStorage.setItem(key, elapsed.toFixed(3));
+        renderBest('daily');
+      }
+      title = isNewBest ? "Today's Best!" : 'Nice Run';
+      body = isNewBest
+        ? `Today's challenge: ${SPEED_TARGET} bubbles in ${elapsed.toFixed(2)}s.`
+        : `Today's challenge: ${elapsed.toFixed(2)}s. Best today: ${prevBest.toFixed(2)}s.`;
+    } else if (state.challenge && state.challenge.mode === 'speed') {
+      const friendTime = state.challenge.value;
+      const won = elapsed < friendTime;
+      title = won ? 'You Won!' : 'They Got You';
+      body = won
+        ? `You: ${elapsed.toFixed(2)}s. Friend: ${friendTime.toFixed(2)}s. New record on this seed.`
+        : `You: ${elapsed.toFixed(2)}s. Friend: ${friendTime.toFixed(2)}s. So close.`;
+    } else {
+      const prevBest = parseFloat(localStorage.getItem(BEST_SPEED_KEY) || 'Infinity');
+      const isNewBest = elapsed < prevBest;
+      if (isNewBest) {
+        localStorage.setItem(BEST_SPEED_KEY, elapsed.toFixed(3));
+        renderBest('speed');
+      }
+      title = isNewBest ? 'New Best!' : 'Nice Run';
+      body = isNewBest
+        ? `You popped ${SPEED_TARGET} bubbles in ${elapsed.toFixed(2)}s.`
+        : `You popped ${SPEED_TARGET} in ${elapsed.toFixed(2)}s. Best: ${prevBest.toFixed(2)}s.`;
     }
 
-    overlayTitle.textContent = isNewBest ? 'New Best!' : 'Nice Run';
-    overlayBody.textContent = isNewBest
-      ? `You popped ${SPEED_TARGET} bubbles in ${elapsed.toFixed(2)}s.`
-      : `You popped ${SPEED_TARGET} in ${elapsed.toFixed(2)}s. Best: ${prevBest.toFixed(2)}s.`;
+    overlayTitle.textContent = title;
+    overlayBody.textContent = body;
+    showShareButton('speed', elapsed);
     overlay.hidden = false;
   }
 
@@ -472,18 +598,98 @@
     stopTimer();
     state.isOver = true;
     state.timeLeft = 0;
+    state.lastFinalValue = state.score;
     renderCountdown();
 
-    const prev = JSON.parse(localStorage.getItem(BEST_SURVIVAL_KEY) || 'null');
-    const isNewBest = !prev || state.score > prev.score;
-    if (isNewBest) {
-      localStorage.setItem(BEST_SURVIVAL_KEY, JSON.stringify({ score: state.score, level: state.level }));
-      renderBest('survival');
+    let title, body;
+
+    if (state.challenge && state.challenge.mode === 'survival') {
+      const friendScore = state.challenge.value;
+      const won = state.score > friendScore;
+      title = won ? 'You Won!' : 'They Got You';
+      body = `You: ${state.score} · L${state.level}. Friend: ${friendScore}.`;
+    } else {
+      const prev = JSON.parse(localStorage.getItem(BEST_SURVIVAL_KEY) || 'null');
+      const isNewBest = !prev || state.score > prev.score;
+      if (isNewBest) {
+        localStorage.setItem(BEST_SURVIVAL_KEY, JSON.stringify({ score: state.score, level: state.level }));
+        renderBest('survival');
+      }
+      title = isNewBest ? 'New High Score!' : 'Game Over';
+      body = `Score: ${state.score} · Level ${state.level} · ${state.popped} bubbles popped${prev && !isNewBest ? ` · Best: ${prev.score}` : ''}`;
     }
 
-    overlayTitle.textContent = isNewBest ? 'New High Score!' : 'Game Over';
-    overlayBody.textContent = `Score: ${state.score} · Level ${state.level} · ${state.popped} bubbles popped${prev && !isNewBest ? ` · Best: ${prev.score}` : ''}`;
+    overlayTitle.textContent = title;
+    overlayBody.textContent = body;
+    showShareButton('survival', state.score);
     overlay.hidden = false;
+  }
+
+  // -------- Share + Challenge --------
+  function showShareButton(mode, value) {
+    if (!overlayShare) return;
+    // Share is meaningful for speed (compare time) and survival (compare score)
+    if (mode !== 'speed' && mode !== 'survival') {
+      overlayShare.hidden = true;
+      return;
+    }
+    // Use existing seed if challenge/daily, otherwise generate a fresh random seed
+    const shareSeed = (state.seed != null) ? state.seed : (Math.random() * 0xFFFFFFFF) >>> 0;
+    const url = buildShareUrl(mode, shareSeed, value);
+    overlayShare.hidden = false;
+    overlayShare.textContent = 'Share Score';
+    overlayShare.dataset.shareUrl = url;
+  }
+
+  function copyShareUrl() {
+    const url = overlayShare && overlayShare.dataset.shareUrl;
+    if (!url) return;
+    const after = () => {
+      overlayShare.textContent = 'Copied! ✓';
+      setTimeout(() => { overlayShare.textContent = 'Share Score'; }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(after).catch(() => {
+        // Fallback: select-and-copy via prompt
+        window.prompt('Copy this link:', url);
+      });
+    } else {
+      window.prompt('Copy this link:', url);
+    }
+  }
+
+  function showChallengeIntro(challenge) {
+    if (!challengeIntro) return;
+    const { mode, value } = challenge;
+    if (mode === 'speed') {
+      challengeTitle.textContent = `Friend popped 50 in ${value.toFixed(2)}s`;
+      challengeBody.textContent = 'Same bubble layout — your turn. Beat their time.';
+    } else {
+      challengeTitle.textContent = `Friend's score: ${Math.round(value)}`;
+      challengeBody.textContent = 'Same starting bubbles in Survival. Beat their score.';
+    }
+    challengeIntro.hidden = false;
+  }
+
+  function acceptChallenge() {
+    if (!state.challenge) return;
+    challengeIntro.hidden = true;
+    state.mode = state.challenge.mode;
+    state.seed = state.challenge.seed;
+    // Update tab visuals to reflect underlying mode
+    modeButtons.forEach((btn) => {
+      const active = btn.dataset.mode === state.mode;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    statTimer.hidden = !(isSpeedLike(state.mode) || state.mode === 'survival');
+    statTarget.hidden = (state.mode !== 'speed' && state.mode !== 'daily');
+    statBest.hidden = true; // hide "best" during challenge — we're comparing to friend
+    statLevel.hidden = (state.mode !== 'survival');
+    statScore.hidden = (state.mode !== 'survival');
+    countdown.hidden = (state.mode !== 'survival');
+    if (state.mode === 'speed') targetEl.textContent = String(SPEED_TARGET);
+    resetRound();
   }
 
   // -------- Wire up --------
@@ -491,6 +697,8 @@
   modeButtons.forEach((btn) => btn.addEventListener('click', () => applyMode(btn.dataset.mode, true)));
   newSheetBtn.addEventListener('click', resetRound);
   overlayAgain.addEventListener('click', resetRound);
+  if (overlayShare) overlayShare.addEventListener('click', copyShareUrl);
+  if (challengeAccept) challengeAccept.addEventListener('click', acceptChallenge);
   document.addEventListener('pointerdown', ensureAudio, { once: true });
 
   let resizeRaf = null;
@@ -501,6 +709,13 @@
     });
   });
 
-  // Init
+  // -------- Init --------
+  // Render zen mode as the background, then check for incoming challenge URL.
+  // applyMode resets state.challenge, so we set it AFTER applyMode runs.
   applyMode('zen');
+  const incomingChallenge = parseChallengeFromUrl();
+  if (incomingChallenge) {
+    state.challenge = incomingChallenge;
+    showChallengeIntro(incomingChallenge);
+  }
 })();

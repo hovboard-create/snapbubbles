@@ -93,6 +93,7 @@
       <button class="mode-btn is-active" data-mode="zen" role="tab" aria-selected="true">Zen</button>
       <button class="mode-btn" data-mode="speed" role="tab" aria-selected="false">Speed</button>
       <button class="mode-btn" data-mode="survival" role="tab" aria-selected="false">Survival</button>
+      <button class="mode-btn" data-mode="daily" role="tab" aria-selected="false">Daily</button>
     </div>
   </header>
 
@@ -119,6 +120,18 @@
         <p id="overlay-body">You popped 50 bubbles in 8.42s.</p>
         <div class="overlay-actions">
           <button id="overlay-again" class="btn btn-primary">Play Again</button>
+          <button id="overlay-share" class="btn btn-ghost" hidden>Share Score</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="challenge-intro" class="overlay" hidden>
+      <div class="overlay-card">
+        <div class="challenge-badge">Challenge</div>
+        <h2 id="challenge-title">Friend popped 50 in 8.42s</h2>
+        <p id="challenge-body">Same bubble layout — your turn. Beat their time.</p>
+        <div class="overlay-actions">
+          <button id="challenge-accept" class="btn btn-primary">Beat It →</button>
         </div>
       </div>
     </div>
