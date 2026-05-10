@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0F1217" />
+<title>Snap Bubbles — Vol. 03 — A Mockup</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com">
+
+<!-- Fraunces (display, with WONK + SOFT axes) + JetBrains Mono -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- General Sans (Fontshare) -->
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Palette — warm dark, editorial */
+  --bg: #0F1217;
+  --bg-warm: #131720;
+  --surface: #1A1F26;
+  --surface-up: #20262F;
+  --ink: #F5F1EA;
+  --ink-soft: #DCD5C8;
+  --ink-mute: #9AA2B0;
+  --ink-faint: #5A6270;
+  --accent: #E89B7C;
+  --accent-deep: #C77A5E;
+  --accent-glow: rgba(232, 155, 124, 0.15);
+  --bubble-clear: #B8DCEA;
+  --bubble-deep: #5A8DA8;
+  --line: rgba(245, 241, 234, 0.08);
+  --line-bright: rgba(245, 241, 234, 0.18);
+  --terracotta-line: rgba(232, 155, 124, 0.35);
+
+  /* Typography */
+  --display: 'Fraunces', 'Times New Roman', Georgia, serif;
+  --body: 'General Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+  /* Layout */
+  --max: 1280px;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --section-pad: clamp(5rem, 10vw, 9rem);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+*::selection { background: var(--accent); color: var(--bg); }
+
+html {
+  scroll-behavior: smooth;
+}
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body { overflow-x: hidden; position: relative; }
+
+/* Subtle film grain — adds analog warmth */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.94  0 0 0 0 0.92  0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+/* Vertical edition marker — runs up the left edge of the page */
+.edition-marker {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--ink-faint);
+  z-index: 50;
+  white-space: nowrap;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+@media (max-width: 900px) { .edition-marker { display: none; } }
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.mono { font-family: var(--mono); }
+.display { font-family: var(--display); font-feature-settings: "ss01", "ss02"; }
+
+/* ─────────────────────────────────── */
+/* MASTHEAD */
+/* ─────────────────────────────────── */
+.masthead {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.25rem 0;
+  background: linear-gradient(180deg, rgba(15,18,23,0.85) 0%, rgba(15,18,23,0) 100%);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+.masthead-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  font-variation-settings: "SOFT" 30, "WONK" 0;
+}
+.brand-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, var(--bubble-clear) 35%, var(--bubble-deep) 100%);
+  box-shadow: 0 0 0 2px rgba(245, 241, 234, 0.05), 0 0 12px rgba(125, 196, 232, 0.4);
+}
+.nav-primary {
+  display: flex;
+  gap: 2.25rem;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+.nav-primary a {
+  color: var(--ink-soft);
+  position: relative;
+  padding: 0.25rem 0;
+  transition: color 200ms ease;
+}
+.nav-primary a:hover { color: var(--accent); }
+.nav-primary a.is-active { color: var(--ink); }
+.nav-primary a.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: var(--accent);
+}
+.masthead-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+@media (max-width: 760px) {
+  .masthead-meta { display: none; }
+  .nav-primary { gap: 1.25rem; font-size: 13px; }
+  .masthead-inner { grid-template-columns: auto 1fr; }
+}
+
+/* ─────────────────────────────────── */
+/* HERO */
+/* ─────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: end;
+  padding: 8rem 0 4rem;
+  overflow: hidden;
+  background: var(--bg);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("https://picsum.photos/seed/snapbubbles-hero-2026/2400/1500");
+  background-size: cover;
+  background-position: center 35%;
+  filter: grayscale(0.18) brightness(0.55) contrast(1.05) sepia(0.08);
+  z-index: 0;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(15,18,23,0.4) 0%, rgba(15,18,23,0.92) 80%),
+    linear-gradient(180deg, rgba(15,18,23,0.4) 0%, rgba(15,18,23,0.1) 30%, rgba(15,18,23,0.95) 100%);
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: var(--max);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+.hero-meta {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--accent);
+  text-transform: uppercase;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.hero-meta .dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); display: inline-block;
+}
+.hero-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(4rem, 14vw, 12.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 80, "WONK" 1;
+  margin-bottom: 0.5rem;
+}
+.hero-title em {
+  font-style: italic;
+  font-weight: 300;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  color: var(--accent);
+}
+.hero-tag {
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 30em;
+  font-weight: 400;
+}
+.hero-tag em {
+  font-family: var(--display);
+  font-style: italic;
+  color: var(--ink);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  align-items: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.btn-primary:hover {
+  background: var(--ink);
+  transform: translateY(-1px);
+}
+.btn-primary .arrow { transition: transform 250ms ease; }
+.btn-primary:hover .arrow { transform: translateX(3px); }
+.btn-ghost {
+  background: rgba(245, 241, 234, 0.06);
+  color: var(--ink);
+  border: 1px solid var(--line-bright);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover {
+  background: rgba(245, 241, 234, 0.12);
+  border-color: rgba(245, 241, 234, 0.3);
+}
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-scroll .line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, var(--ink-mute));
+  animation: scrollPulse 2.5s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+@media (max-width: 600px) {
+  .hero { min-height: 92svh; padding-top: 7rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
+}
+
+/* ─────────────────────────────────── */
+/* GAME PREVIEW */
+/* ─────────────────────────────────── */
+.game-section {
+  position: relative;
+  padding: var(--section-pad) 0;
+  background: var(--bg-warm);
+  overflow: hidden;
+}
+.game-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("https://picsum.photos/seed/snapbubbles-paper-22/2000/1200");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.07;
+  filter: grayscale(1) contrast(1.1);
+  pointer-events: none;
+}
+.game-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(26, 31, 38, 0.78) 0%, rgba(15, 18, 23, 0.85) 100%);
+  border: 1px solid var(--line-bright);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow:
+    0 30px 80px -20px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  max-width: 920px;
+  margin: 0 auto;
+}
+.game-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(15, 18, 23, 0.5);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+}
+.game-tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-mute);
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 180ms ease;
+  letter-spacing: 0.01em;
+}
+.game-tab.is-active {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+.game-tab:not(.is-active):hover {
+  color: var(--ink);
+}
+.game-grid-wrap {
+  position: relative;
+  background: linear-gradient(135deg, rgba(45, 100, 130, 0.18) 0%, rgba(20, 60, 80, 0.28) 100%);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid rgba(125, 196, 232, 0.1);
+  overflow: hidden;
+}
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  .game-grid { grid-template-columns: repeat(7, 1fr); }
+}
+.bubble {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 60% 35% at 50% 22%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0) 75%),
+    radial-gradient(ellipse 28% 16% at 30% 76%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 80%),
+    radial-gradient(circle at 50% 50%, transparent 66%, rgba(15,40,55,0.4) 88%, rgba(8,25,32,0.65) 100%),
+    radial-gradient(circle at 50% 50%, rgba(220, 240, 248, 0.18) 0%, rgba(180, 215, 230, 0.15) 60%, rgba(140, 190, 215, 0.22) 100%);
+  box-shadow:
+    inset 0 -3px 6px rgba(8, 25, 32, 0.3),
+    inset 0 3px 5px rgba(255, 255, 255, 0.55),
+    0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 100ms ease;
+}
+.bubble:hover { transform: scale(1.05); }
+/* Pre-popped bubbles (mockup state — looks like someone's been playing) */
+.bubble.is-popped {
+  background:
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 0.78  0 0 0 0 0.85  0 0 0 0 0.9  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 50% 50%, rgba(0,30,40,0.4) 0%, rgba(0,30,40,0.05) 80%);
+  background-size: 100% 100%;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: scale(0.92);
+  opacity: 0.7;
+}
+.bubble.is-gold {
+  background:
+    radial-gradient(ellipse 60% 35% at 50% 22%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(120,70,0,0.3) 90%, rgba(80,50,0,0.5) 100%),
+    radial-gradient(circle at 50% 50%, rgba(255, 235, 150, 0.5) 0%, rgba(232, 155, 124, 0.6) 60%, rgba(199, 122, 94, 0.7) 100%);
+  box-shadow:
+    inset 0 -3px 5px rgba(80, 50, 0, 0.25),
+    inset 0 3px 4px rgba(255, 255, 255, 0.6),
+    0 0 14px rgba(232, 155, 124, 0.35);
+}
+.game-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding: 0 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.game-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.game-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.game-stat-value {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-feature-settings: "ss01";
+}
+.game-stat-value.mono { font-family: var(--mono); font-size: 1.2rem; font-weight: 400; }
+.game-stat-value.is-accent { color: var(--accent); }
+.game-section-head {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.section-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.game-section-head h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 90, "SOFT" 50;
+  max-width: 28em;
+  margin: 0 auto;
+}
+.game-section-head h2 em { font-style: italic; color: var(--accent); }
+
+/* ─────────────────────────────────── */
+/* STAT CALLOUT — editorial fact */
+/* ─────────────────────────────────── */
+.stat-callout {
+  padding: var(--section-pad) 0;
+  background: var(--bg);
+  position: relative;
+}
+.stat-callout::before, .stat-callout::after {
+  content: '';
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  height: 1px;
+  background: var(--line);
+}
+.stat-callout::before { top: 0; }
+.stat-callout::after { bottom: 0; }
+.stat-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: baseline;
+  max-width: 64rem;
+  margin: 0 auto;
+}
+.stat-num {
+  font-family: var(--display);
+  font-size: clamp(5rem, 14vw, 11rem);
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-num em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+}
+.stat-context {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+  line-height: 1.4;
+  color: var(--ink-soft);
+  max-width: 22em;
+  border-left: 1px solid var(--terracotta-line);
+  padding-left: 1.25rem;
+}
+.stat-context strong {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .stat-row { grid-template-columns: 1fr; gap: 1.25rem; }
+  .stat-context { border-left: 0; border-top: 1px solid var(--terracotta-line); padding: 1rem 0 0; }
+}
+
+/* ─────────────────────────────────── */
+/* THREE WAYS TO POP */
+/* ─────────────────────────────────── */
+.modes {
+  padding: var(--section-pad) 0;
+  background: var(--bg-warm);
+}
+.section-head {
+  margin-bottom: 4rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+.section-head .section-tag { margin-bottom: 0.75rem; }
+.section-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  max-width: 14em;
+}
+.section-title em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 300;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+}
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 1000px) {
+  .modes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .modes-grid { grid-template-columns: 1fr; }
+}
+.mode-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 2rem 1.5rem 1.75rem;
+  transition: all 280ms cubic-bezier(0.2, 0, 0, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 260px;
+}
+.mode-card:hover {
+  border-color: var(--accent);
+  background: var(--surface-up);
+  transform: translateY(-3px);
+}
+.mode-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+.mode-card h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.85rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 60, "SOFT" 50;
+}
+.mode-card p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-mute);
+  margin-top: auto;
+}
+.mode-card-featured {
+  background: linear-gradient(180deg, rgba(232, 155, 124, 0.1) 0%, var(--surface) 60%);
+  border-color: var(--terracotta-line);
+}
+.mode-card-featured .mode-num { color: var(--accent); }
+.mode-card-featured h3 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* ─────────────────────────────────── */
+/* DAILY BANNER — asymmetric */
+/* ─────────────────────────────────── */
+.daily {
+  padding: var(--section-pad) 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.daily-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .daily-grid { grid-template-columns: 1fr; }
+}
+.daily-text { display: flex; flex-direction: column; gap: 1rem; }
+.daily-date {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.daily-date::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+.daily-text h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+}
+.daily-text h2 em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 300;
+}
+.daily-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 2rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.25rem 0;
+  margin: 0.75rem 0;
+}
+.daily-stat-num {
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  font-variation-settings: "opsz" 60, "SOFT" 50;
+  font-variant-numeric: tabular-nums;
+}
+.daily-stat-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.daily-text p {
+  color: var(--ink-mute);
+  max-width: 30em;
+  line-height: 1.6;
+}
+.daily-actions { margin-top: 0.5rem; }
+.daily-img {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.daily-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.15) sepia(0.05);
+  transition: transform 800ms cubic-bezier(0.2,0,0,1);
+}
+.daily-img:hover img { transform: scale(1.04); }
+.daily-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, transparent 60%, rgba(15,18,23,0.5) 100%);
+  pointer-events: none;
+}
+.daily-img-tag {
+  position: absolute;
+  bottom: 1.25rem; left: 1.25rem;
+  z-index: 2;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: rgba(15, 18, 23, 0.55);
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line-bright);
+}
+
+/* ─────────────────────────────────── */
+/* PULL QUOTE */
+/* ─────────────────────────────────── */
+.pull-quote {
+  padding: var(--section-pad) 0;
+  background: var(--bg-warm);
+  position: relative;
+}
+.pull-quote-inner {
+  max-width: 56rem;
+  margin: 0 auto;
+  position: relative;
+  text-align: left;
+  padding-left: clamp(2rem, 6vw, 4rem);
+}
+.pull-quote-mark {
+  position: absolute;
+  left: 0; top: -0.4em;
+  font-family: var(--display);
+  font-size: clamp(7rem, 16vw, 14rem);
+  line-height: 1;
+  color: var(--accent);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-style: italic;
+  font-weight: 400;
+  pointer-events: none;
+}
+.pull-quote p {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  line-height: 1.35;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 100, "SOFT" 100, "WONK" 1;
+}
+.pull-quote p strong {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--accent);
+}
+.pull-quote-attribution {
+  margin-top: 2rem;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.pull-quote-attribution a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--terracotta-line);
+  padding-bottom: 1px;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+.pull-quote-attribution a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ─────────────────────────────────── */
+/* ARTICLES */
+/* ─────────────────────────────────── */
+.articles {
+  padding: var(--section-pad) 0;
+  background: var(--bg);
+}
+.articles-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 700px) {
+  .articles-head { grid-template-columns: 1fr; }
+}
+.articles-head .section-title { max-width: none; }
+.articles-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: gap 200ms ease;
+  padding: 0.5rem 0;
+}
+.articles-link:hover { gap: 0.8rem; }
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+@media (max-width: 900px) {
+  .articles-grid { grid-template-columns: repeat(2, 1fr); }
+  .articles-grid .article-card:nth-child(3) { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+  .articles-grid { grid-template-columns: 1fr; }
+  .articles-grid .article-card:nth-child(3) { grid-column: span 1; }
+}
+.article-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  cursor: pointer;
+  transition: transform 350ms cubic-bezier(0.2,0,0,1);
+}
+.article-card:hover { transform: translateY(-4px); }
+.article-img {
+  aspect-ratio: 4 / 5;
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.article-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.12) brightness(0.9);
+  transition: transform 700ms cubic-bezier(0.2,0,0,1), filter 400ms ease;
+}
+.article-card:hover .article-img img {
+  transform: scale(1.06);
+  filter: grayscale(0) brightness(1);
+}
+.article-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.article-meta .tag {
+  color: var(--accent);
+  border: 1px solid var(--terracotta-line);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+.article-card h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.55rem;
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  transition: color 200ms ease;
+}
+.article-card:hover h3 { color: var(--accent); }
+.article-card p {
+  font-size: 0.95rem;
+  color: var(--ink-mute);
+  line-height: 1.55;
+}
+
+/* ─────────────────────────────────── */
+/* STORY (about) */
+/* ─────────────────────────────────── */
+.story {
+  padding: var(--section-pad) 0;
+  background: var(--bg-warm);
+  position: relative;
+}
+.story::before {
+  content: 'EST. 1957 — REV. 2026';
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.32em;
+  color: var(--ink-faint);
+}
+@media (max-width: 1100px) {
+  .story::before { display: none; }
+}
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+@media (max-width: 850px) {
+  .story-grid { grid-template-columns: 1fr; }
+}
+.story-img {
+  aspect-ratio: 5 / 6;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--line);
+}
+.story-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.2) sepia(0.1) contrast(1.05);
+}
+.story-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.story-text .section-tag { margin-bottom: 0.5rem; }
+.story-text h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+  margin-bottom: 0.5rem;
+}
+.story-text h2 em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 300;
+}
+.story-text p {
+  color: var(--ink-soft);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+.dropcap {
+  font-family: var(--display);
+  font-weight: 500;
+  font-style: italic;
+  font-size: 4.5em;
+  line-height: 0.85;
+  float: left;
+  padding-right: 0.12em;
+  padding-top: 0.08em;
+  color: var(--accent);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+}
+.story-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+  margin: 1rem 0 0.5rem;
+}
+
+/* ─────────────────────────────────── */
+/* FOOTER */
+/* ─────────────────────────────────── */
+.site-footer {
+  padding: 5rem 0 3rem;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(2, 1fr) 1.2fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-bottom: 4rem;
+}
+@media (max-width: 800px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+.footer-brand .brand { margin-bottom: 1rem; font-size: 1.3rem; }
+.footer-brand p {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ink-mute);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-variation-settings: "opsz" 30, "SOFT" 100;
+  max-width: 14em;
+}
+.footer-col h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: var(--ink-soft);
+  padding: 0.35rem 0;
+  transition: color 180ms ease;
+}
+.footer-col a:hover { color: var(--accent); }
+.footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.footer-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 2rem;
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-style: italic;
+  font-family: var(--display);
+  font-variation-settings: "opsz" 14, "SOFT" 50;
+  line-height: 1.6;
+  max-width: 60em;
+}
+
+/* ─────────────────────────────────── */
+/* ENTRANCE ANIMATIONS */
+/* ─────────────────────────────────── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.hero-meta { animation: fadeIn 1.2s ease-out 0.1s both; }
+.hero-title { animation: riseIn 1s cubic-bezier(0.2, 0, 0, 1) 0.25s both; }
+.hero-tag { animation: riseIn 1s cubic-bezier(0.2, 0, 0, 1) 0.5s both; }
+.hero-actions { animation: riseIn 1s cubic-bezier(0.2, 0, 0, 1) 0.7s both; }
+.hero-scroll { animation: fadeIn 1.5s ease-out 1.2s both; }
+
+/* Subtle bubble breathing — staggered to feel alive */
+@keyframes bubbleBreath {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.015); filter: brightness(1.05); }
+}
+.bubble:not(.is-popped):not(.is-gold) {
+  animation: bubbleBreath 4s ease-in-out infinite;
+}
+.bubble:nth-child(7n) { animation-delay: 0.3s; }
+.bubble:nth-child(7n+1) { animation-delay: 0.7s; }
+.bubble:nth-child(7n+2) { animation-delay: 1.1s; }
+.bubble:nth-child(7n+3) { animation-delay: 1.5s; }
+.bubble:nth-child(7n+4) { animation-delay: 2.0s; }
+.bubble:nth-child(7n+5) { animation-delay: 2.5s; }
+.bubble:nth-child(7n+6) { animation-delay: 0s; }
+
+@keyframes goldShimmer {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+.bubble.is-gold { animation: goldShimmer 1.6s ease-in-out infinite; }
+
+/* Mockup banner — small thing at bottom that flags this is a preview */
+.mockup-flag {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  z-index: 200;
+  box-shadow: 0 8px 30px rgba(232, 155, 124, 0.35);
+}
+@media (max-width: 600px) { .mockup-flag { font-size: 10px; padding: 0.5rem 0.8rem; } }
+</style>
+</head>
+<body>
+
+<div class="edition-marker">EST. 1957 ── REV. 2026 ── VOL. 03</div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="#">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Snap Bubbles</span>
+    </a>
+    <nav class="nav-primary">
+      <a href="#" class="is-active">Play</a>
+      <a href="#">Daily</a>
+      <a href="#">Articles</a>
+      <a href="#">How to Play</a>
+    </nav>
+    <div class="masthead-meta">VOL. 03 — 2026</div>
+  </div>
+</header>
+
+<!-- ─────────────────────── HERO ─────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-meta">
+      <span class="dot"></span>
+      <span>EST. 1957</span>
+      <span class="dot"></span>
+      <span>Revived 2026</span>
+      <span class="dot"></span>
+      <span>Vol. 03</span>
+    </div>
+    <h1 class="hero-title">Snap<br><em>Bubbles</em>.</h1>
+    <p class="hero-tag">Virtual bubble wrap, made carefully. <em>Three modes, no signup,</em> a small reset between meetings.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn btn-primary">Start popping <span class="arrow">→</span></a>
+      <a href="#" class="btn btn-ghost">Today's challenge</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>scroll</span>
+    <span class="line"></span>
+  </div>
+</section>
+
+<!-- ─────────────────────── GAME PREVIEW ─────────────────────── -->
+<section class="game-section">
+  <div class="container">
+    <div class="game-section-head">
+      <span class="section-tag">— THE GAME</span>
+      <h2>Pop a sheet right here, or pick <em>a mode below</em>.</h2>
+    </div>
+    <div class="game-card">
+      <div class="game-tabs" role="tablist">
+        <button class="game-tab is-active">Zen</button>
+        <button class="game-tab">Speed</button>
+        <button class="game-tab">Survival</button>
+        <button class="game-tab">Daily</button>
+      </div>
+      <div class="game-grid-wrap">
+        <div class="game-grid" id="bubble-grid"></div>
+      </div>
+      <div class="game-stats">
+        <div class="game-stat">
+          <span class="game-stat-label">Popped</span>
+          <span class="game-stat-value mono">12</span>
+        </div>
+        <div class="game-stat">
+          <span class="game-stat-label">Time</span>
+          <span class="game-stat-value mono">—</span>
+        </div>
+        <div class="game-stat">
+          <span class="game-stat-label">Best Today</span>
+          <span class="game-stat-value mono is-accent">8.42s</span>
+        </div>
+        <div class="game-stat" style="text-align:right">
+          <span class="game-stat-label">Mode</span>
+          <span class="game-stat-value">Zen</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── STAT CALLOUT ─────────────────────── -->
+<section class="stat-callout">
+  <div class="container">
+    <div class="stat-row">
+      <div class="stat-num">23,4<em>01</em></div>
+      <div class="stat-context">
+        <strong>bubbles popped this week</strong> — without anyone leaving the browser tab. Each pop is a complete event in miniature, generated fresh by the audio engine.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── THREE WAYS TO POP ─────────────────────── -->
+<section class="modes">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-tag">— THREE WAYS</span>
+      <h2 class="section-title">Three Ways<br>to <em>Pop</em>.</h2>
+    </div>
+    <div class="modes-grid">
+      <div class="mode-card">
+        <span class="mode-num">/ 01</span>
+        <h3>Zen</h3>
+        <p>Pop forever. The sheet refills itself. No timer, no goal, no urgency — fidget mode by design.</p>
+      </div>
+      <div class="mode-card">
+        <span class="mode-num">/ 02</span>
+        <h3>Speed</h3>
+        <p>Race to fifty. Best time saves automatically. A small private record, just you against your previous self.</p>
+      </div>
+      <div class="mode-card">
+        <span class="mode-num">/ 03</span>
+        <h3>Survival</h3>
+        <p>Beat the countdown. Gold extends time, green poison subtracts. Every level adds difficulty.</p>
+      </div>
+      <div class="mode-card mode-card-featured">
+        <span class="mode-num">/ 04 — TODAY</span>
+        <h3><em>Daily.</em></h3>
+        <p>Same exact bubbles for every player today. Compare your time against the world. New seed at midnight UTC.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── DAILY BANNER ─────────────────────── -->
+<section class="daily">
+  <div class="container">
+    <div class="daily-grid">
+      <div class="daily-text">
+        <span class="section-tag">— TODAY'S CHALLENGE</span>
+        <span class="daily-date">Saturday — May 9, 2026</span>
+        <h2>342 players<br>have tried<br><em>today's seed.</em></h2>
+        <div class="daily-stats">
+          <div>
+            <div class="daily-stat-num">9.10<span style="color:var(--ink-mute)">s</span></div>
+            <div class="daily-stat-label">Median time</div>
+          </div>
+          <div>
+            <div class="daily-stat-num">6.84<span style="color:var(--ink-mute)">s</span></div>
+            <div class="daily-stat-label">Best, set 14m ago</div>
+          </div>
+          <div>
+            <div class="daily-stat-num">2,847</div>
+            <div class="daily-stat-label">Total pops today</div>
+          </div>
+          <div>
+            <div class="daily-stat-num">47<span style="color:var(--ink-mute)">%</span></div>
+            <div class="daily-stat-label">Hit rate top half</div>
+          </div>
+        </div>
+        <p>Same fifty bubbles for everyone, every day. Compare your run against everyone else who showed up.</p>
+        <div class="daily-actions">
+          <a href="#" class="btn btn-primary">Play today's <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <div class="daily-img">
+        <img src="https://picsum.photos/seed/snapbubbles-daily-desk/900/1100" alt="" loading="lazy" />
+        <div class="daily-img-tag">SEED — 20260509</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── PULL QUOTE ─────────────────────── -->
+<section class="pull-quote">
+  <div class="container">
+    <div class="pull-quote-inner">
+      <span class="pull-quote-mark">"</span>
+      <p>Each pop is a complete event in miniature. You apply pressure, the membrane resists, then it gives way with a sharp acoustic snap. From the brain's perspective, that's a small action with an immediate, unambiguous payoff — <strong>a tiny dopamine hit.</strong></p>
+      <div class="pull-quote-attribution">— from <a href="#">Why popping bubble wrap relieves stress</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── ARTICLES ─────────────────────── -->
+<section class="articles">
+  <div class="container">
+    <div class="articles-head">
+      <div>
+        <span class="section-tag">— RECENT READS</span>
+        <h2 class="section-title">From the<br><em>Notebook.</em></h2>
+      </div>
+      <a href="#" class="articles-link">All ten articles →</a>
+    </div>
+    <div class="articles-grid">
+      <article class="article-card">
+        <div class="article-img">
+          <img src="https://picsum.photos/seed/article-stress-relief/700/900" alt="" loading="lazy" />
+        </div>
+        <div class="article-meta">
+          <span class="tag">Science</span>
+          <span>5 MIN READ</span>
+        </div>
+        <h3>Why popping bubble wrap relieves stress</h3>
+        <p>The three psychological mechanisms — micro-rewards, predictable feedback, motor regulation — that make popping satisfying.</p>
+      </article>
+      <article class="article-card">
+        <div class="article-img">
+          <img src="https://picsum.photos/seed/article-history-1957/700/900" alt="" loading="lazy" />
+        </div>
+        <div class="article-meta">
+          <span class="tag">History</span>
+          <span>6 MIN READ</span>
+        </div>
+        <h3>Invented as wallpaper in 1957</h3>
+        <p>Bubble wrap was a failed wallpaper, then failed greenhouse insulation, before accidentally becoming a packaging icon.</p>
+      </article>
+      <article class="article-card">
+        <div class="article-img">
+          <img src="https://picsum.photos/seed/article-adhd-focus/700/900" alt="" loading="lazy" />
+        </div>
+        <div class="article-meta">
+          <span class="tag">Practice</span>
+          <span>7 MIN READ</span>
+        </div>
+        <h3>Bubble wrap for ADHD, anxiety, focus</h3>
+        <p>How fidget tools actually work — the cognitive load mechanism that helps some brains focus and calms others.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── STORY ─────────────────────── -->
+<section class="story">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-img">
+        <img src="https://picsum.photos/seed/story-craft-2026/900/1100" alt="" loading="lazy" />
+      </div>
+      <div class="story-text">
+        <span class="section-tag">— THE STORY</span>
+        <h2>Why we<br>rebuilt a<br><em>dead 2005</em><br>domain.</h2>
+        <div class="story-divider"></div>
+        <p><span class="dropcap">S</span>napbubbles.com ran a Flash-based bubble wrap game in the early 2000s. Adobe killed Flash in December 2020 and the site went dark. We rebuilt it in HTML5 — same core idea, same satisfying pop, but now with three modes, proper mobile support, and procedurally synthesized audio.</p>
+        <p>The bubble wrap design dates back to 1957, when two engineers in New Jersey were trying to invent textured wallpaper. It flopped. They pivoted to greenhouse insulation. That flopped too. Then IBM needed packaging for the 1401 computer. Suddenly bubble wrap had a market — and decades later, an accidental cultural object.</p>
+        <p>This site is one tiny extension of that lineage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── FOOTER ─────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#">
+          <span class="brand-mark"></span>
+          <span class="brand-name">Snap Bubbles</span>
+        </a>
+        <p>Virtual bubble wrap.<br>Made carefully.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Play</h4>
+        <a href="#">Zen</a>
+        <a href="#">Speed</a>
+        <a href="#">Survival</a>
+        <a href="#">Daily challenge</a>
+      </div>
+      <div class="footer-col">
+        <h4>Read</h4>
+        <a href="#">The science</a>
+        <a href="#">The history</a>
+        <a href="#">For ADHD</a>
+        <a href="#">For anxiety</a>
+        <a href="#">All articles</a>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <a href="#">How to play</a>
+        <a href="#">The story</a>
+        <a href="#">Bubble wrap day</a>
+        <div class="footer-meta" style="margin-top: 1.25rem">
+          <span>EST. 1957</span>
+          <span>REV. 2026</span>
+          <span>VOL. 03</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Snap Bubbles. The bubble wrap design dates to 1957. The original snapbubbles.com domain was registered in 2005. This rebuild is from 2026. Pop sounds are procedurally synthesized — no recordings, no compromises.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mockup-flag">DESIGN MOCKUP — V03</div>
+
+<script>
+  // Build static bubble grid — purely visual, no game logic
+  (function() {
+    const grid = document.getElementById('bubble-grid');
+    if (!grid) return;
+    const total = 60;
+    // Bubbles 0-59. Mark some as popped, some as gold for visual variety.
+    const poppedSet = new Set([3, 4, 11, 12, 13, 21, 28, 36, 37, 41, 49, 52]);
+    const goldSet = new Set([17, 33, 47]);
+    for (let i = 0; i < total; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      if (poppedSet.has(i)) b.classList.add('is-popped');
+      else if (goldSet.has(i)) b.classList.add('is-gold');
+      grid.appendChild(b);
+    }
+  })();
+</script>
+
+</body>
+</html>

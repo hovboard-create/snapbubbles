@@ -718,4 +718,11 @@
     state.challenge = incomingChallenge;
     showChallengeIntro(incomingChallenge);
   }
+
+  // Expose applyMode for the homepage's mode-card jump links
+  // (when user clicks a "Three Ways to Pop" card, scroll to game and switch mode)
+  window.snapbubbles = {
+    applyMode: applyMode,
+    state: state,
+  };
 })();

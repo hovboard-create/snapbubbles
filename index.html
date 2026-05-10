@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#0d1117" />
+  <meta name="theme-color" content="#0F1217" />
   <title>Snap Bubbles — Virtual Bubble Wrap Pop Game (Free Online)</title>
   <meta name="description" content="Pop virtual bubble wrap online — three modes for relaxation, speed runs, or arcade-style countdown survival. Free, no download, plays in any browser." />
   <link rel="canonical" href="https://snapbubbles.com/" />
@@ -21,7 +21,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://snapbubbles.com/" />
   <meta property="og:title" content="Snap Bubbles — Virtual Bubble Wrap Pop Game (Free Online)" />
-  <meta property="og:description" content="Pop virtual bubble wrap online — three modes for relaxation, speed-run challenges, or arcade-style countdown survival. Free, no download, plays in any browser." />
+  <meta property="og:description" content="Pop virtual bubble wrap online — three modes for relaxation, speed runs, or arcade-style countdown survival. Free, no download, plays in any browser." />
   <meta property="og:image" content="https://snapbubbles.com/icons/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -48,15 +48,8 @@
     "operatingSystem": "Web Browser",
     "isAccessibleForFree": true,
     "playMode": "SinglePlayer",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Snap Bubbles"
-    }
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "publisher": {"@type": "Organization", "name": "Snap Bubbles"}
   }
   </script>
 
@@ -72,100 +65,368 @@
   <!-- AdSense: account ca-pub-6647695511145371 -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6647695511145371" crossorigin="anonymous"></script>
 
+  <!-- Typography: Fraunces (display) + JetBrains Mono (mono) + General Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Mobile-only top banner ad (forced 320x50 banner) -->
+  <!-- Mobile-only top banner ad -->
   <div class="ad-slot ad-slot-mobile-top" aria-hidden="true">
     <ins class="adsbygoogle"
-         style="display:inline-block; width:320px; height:50px;"
+         style="display:block; width:100%; height:50px;"
          data-ad-client="ca-pub-6647695511145371"
-         data-ad-slot="5593540392"></ins>
+         data-ad-slot="5593540392"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-dot" aria-hidden="true"></span>
-      <span class="brand-name">Snap Bubbles</span>
-    </div>
-    <div class="modes" role="tablist" aria-label="Game mode">
-      <button class="mode-btn is-active" data-mode="zen" role="tab" aria-selected="true">Zen</button>
-      <button class="mode-btn" data-mode="speed" role="tab" aria-selected="false">Speed</button>
-      <button class="mode-btn" data-mode="survival" role="tab" aria-selected="false">Survival</button>
-      <button class="mode-btn" data-mode="daily" role="tab" aria-selected="false">Daily</button>
+  <!-- Vertical edition marker (decorative, desktop only) -->
+  <div class="edition-marker">EST. 1957 ── REV. 2026 ── VOL. 03</div>
+
+  <!-- ─────────────────────── MASTHEAD ─────────────────────── -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Snap Bubbles</span>
+      </a>
+      <nav class="nav-primary" aria-label="Primary navigation">
+        <a href="#game" class="is-active">Play</a>
+        <a href="#daily">Daily</a>
+        <a href="/articles.html">Articles</a>
+        <a href="/how-to-play.html">How to Play</a>
+      </nav>
+      <div class="masthead-meta">VOL. 03 — 2026</div>
     </div>
   </header>
 
-  <nav class="subnav" aria-label="Site navigation">
-    <a href="/how-to-play.html">How to Play</a>
-    <a href="/articles.html">Articles</a>
-  </nav>
-
-  <section class="stats" aria-live="polite">
-    <div class="stat" data-stat="popped"><span class="stat-label">Popped</span><span class="stat-value" id="popped">0</span></div>
-    <div class="stat" data-stat="timer" hidden><span class="stat-label">Time</span><span class="stat-value" id="timer">0.00s</span></div>
-    <div class="stat" data-stat="target" hidden><span class="stat-label">Target</span><span class="stat-value" id="target">50</span></div>
-    <div class="stat" data-stat="best" hidden><span class="stat-label">Best</span><span class="stat-value" id="best">—</span></div>
-    <div class="stat" data-stat="level" hidden><span class="stat-label">Level</span><span class="stat-value" id="level">1</span></div>
-    <div class="stat" data-stat="score" hidden><span class="stat-label">Score</span><span class="stat-value" id="score">0</span></div>
+  <!-- ─────────────────────── HERO ─────────────────────── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-meta">
+        <span class="dot" aria-hidden="true"></span>
+        <span>EST. 1957</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>Revived 2026</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>Vol. 03</span>
+      </div>
+      <h1 class="hero-title">Snap<br><em>Bubbles</em>.</h1>
+      <p class="hero-tag">Virtual bubble wrap, made carefully. <em>Three modes, no signup,</em> a small reset between meetings.</p>
+      <div class="hero-actions">
+        <a href="#game" class="btn btn-primary">Start popping <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="#daily" class="btn btn-ghost">Today's challenge</a>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <span>scroll</span>
+      <span class="line"></span>
+    </div>
   </section>
 
-  <div id="countdown" class="countdown" hidden aria-hidden="true">
-    <div class="countdown-fill"></div>
-    <div class="countdown-text"><span id="countdown-seconds">30.0</span>s</div>
-  </div>
+  <!-- ─────────────────────── GAME ─────────────────────── -->
+  <section class="game-section">
+    <div class="container">
+      <div class="game-card" id="game">
+        <div class="game-card-head">
+          <div class="modes" role="tablist" aria-label="Game mode">
+            <button class="mode-btn is-active" data-mode="zen" role="tab" aria-selected="true">Zen</button>
+            <button class="mode-btn" data-mode="speed" role="tab" aria-selected="false">Speed</button>
+            <button class="mode-btn" data-mode="survival" role="tab" aria-selected="false">Survival</button>
+            <button class="mode-btn" data-mode="daily" role="tab" aria-selected="false">Daily</button>
+          </div>
+          <button id="new-sheet" class="btn btn-ghost btn-sm" aria-label="New sheet of bubbles">New Sheet</button>
+        </div>
 
-  <main class="game">
-    <div id="grid" class="grid" aria-label="Bubble wrap"></div>
+        <section class="stats" aria-live="polite">
+          <div class="stat" data-stat="popped"><span class="stat-label">Popped</span><span class="stat-value mono" id="popped">0</span></div>
+          <div class="stat" data-stat="timer" hidden><span class="stat-label">Time</span><span class="stat-value mono" id="timer">0.00s</span></div>
+          <div class="stat" data-stat="target" hidden><span class="stat-label">Target</span><span class="stat-value mono" id="target">50</span></div>
+          <div class="stat" data-stat="best" hidden><span class="stat-label">Best</span><span class="stat-value mono" id="best">—</span></div>
+          <div class="stat" data-stat="level" hidden><span class="stat-label">Level</span><span class="stat-value mono" id="level">1</span></div>
+          <div class="stat" data-stat="score" hidden><span class="stat-label">Score</span><span class="stat-value mono" id="score">0</span></div>
+        </section>
 
-    <div id="overlay" class="overlay" hidden>
-      <div class="overlay-card">
-        <h2 id="overlay-title">Nice!</h2>
-        <p id="overlay-body">You popped 50 bubbles in 8.42s.</p>
-        <div class="overlay-actions">
-          <button id="overlay-again" class="btn btn-primary">Play Again</button>
-          <button id="overlay-share" class="btn btn-ghost" hidden>Share Score</button>
+        <div id="countdown" class="countdown" hidden aria-hidden="true">
+          <div class="countdown-fill"></div>
+          <div class="countdown-text"><span id="countdown-seconds">30.0</span>s</div>
+        </div>
+
+        <div class="game-grid-wrap">
+          <div id="grid" class="grid" aria-label="Bubble wrap"></div>
+
+          <div id="overlay" class="overlay" hidden>
+            <div class="overlay-card">
+              <h2 id="overlay-title">Nice!</h2>
+              <p id="overlay-body">You popped 50 bubbles in 8.42s.</p>
+              <div class="overlay-actions">
+                <button id="overlay-again" class="btn btn-primary">Play Again</button>
+                <button id="overlay-share" class="btn btn-ghost" hidden>Share Score</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="challenge-intro" class="overlay" hidden>
+            <div class="overlay-card">
+              <div class="challenge-badge">Challenge</div>
+              <h2 id="challenge-title">Friend popped 50 in 8.42s</h2>
+              <p id="challenge-body">Same bubble layout — your turn. Beat their time.</p>
+              <div class="overlay-actions">
+                <button id="challenge-accept" class="btn btn-primary">Beat It →</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="level-toast" class="level-toast" hidden></div>
+          <div id="mode-toast" class="mode-toast" hidden></div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div id="challenge-intro" class="overlay" hidden>
-      <div class="overlay-card">
-        <div class="challenge-badge">Challenge</div>
-        <h2 id="challenge-title">Friend popped 50 in 8.42s</h2>
-        <p id="challenge-body">Same bubble layout — your turn. Beat their time.</p>
-        <div class="overlay-actions">
-          <button id="challenge-accept" class="btn btn-primary">Beat It →</button>
+  <!-- ─────────────────────── STAT CALLOUT ─────────────────────── -->
+  <section class="stat-callout">
+    <div class="container">
+      <div class="stat-row">
+        <div class="stat-num">23,4<em>01</em></div>
+        <div class="stat-context">
+          <strong>bubbles popped this week</strong> — without anyone leaving the browser tab. Each pop is a complete event in miniature, generated fresh by the audio engine.
         </div>
       </div>
     </div>
+  </section>
 
-    <div id="level-toast" class="level-toast" hidden></div>
-    <div id="mode-toast" class="mode-toast" hidden></div>
-  </main>
+  <!-- ─────────────────────── THREE WAYS TO POP ─────────────────────── -->
+  <section class="modes-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">— THREE WAYS</span>
+        <h2 class="section-title">Three Ways<br>to <em>Pop</em>.</h2>
+      </div>
+      <div class="modes-grid">
+        <a href="#game" class="mode-card" data-jump-mode="zen">
+          <span class="mode-num">/ 01</span>
+          <h3>Zen</h3>
+          <p>Pop forever. The sheet refills itself. No timer, no goal, no urgency — fidget mode by design.</p>
+        </a>
+        <a href="#game" class="mode-card" data-jump-mode="speed">
+          <span class="mode-num">/ 02</span>
+          <h3>Speed</h3>
+          <p>Race to fifty. Best time saves automatically. A small private record, just you against your previous self.</p>
+        </a>
+        <a href="#game" class="mode-card" data-jump-mode="survival">
+          <span class="mode-num">/ 03</span>
+          <h3>Survival</h3>
+          <p>Beat the countdown. Gold extends time, green poison subtracts. Every level adds difficulty.</p>
+        </a>
+        <a href="#game" class="mode-card mode-card-featured" data-jump-mode="daily">
+          <span class="mode-num">/ 04 — TODAY</span>
+          <h3><em>Daily.</em></h3>
+          <p>Same exact bubbles for every player today. Compare your time against the world. New seed at midnight UTC.</p>
+        </a>
+      </div>
+    </div>
+  </section>
 
-  <footer class="bottombar">
-    <button id="new-sheet" class="btn btn-ghost" aria-label="New sheet of bubbles">New Sheet</button>
-    <div class="ad-slot ad-slot-desktop-bottom" aria-hidden="true">
-      <!-- Desktop-only bottom ad — auto format -->
-      <ins class="adsbygoogle"
-           style="display:block; width:100%; height:100%;"
-           data-ad-client="ca-pub-6647695511145371"
-           data-ad-slot="4280458729"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  <!-- ─────────────────────── DAILY BANNER ─────────────────────── -->
+  <section class="daily" id="daily">
+    <div class="container">
+      <div class="daily-grid">
+        <div class="daily-text">
+          <span class="section-tag">— TODAY'S CHALLENGE</span>
+          <span class="daily-date" id="daily-date">Today's seed</span>
+          <h2>Same bubbles<br>for everyone<br><em>today.</em></h2>
+          <p>The Daily Challenge gives every player the exact same fifty bubbles. Race against your previous attempts and the rest of the world. New seed at midnight UTC.</p>
+          <div class="daily-actions">
+            <a href="#game" class="btn btn-primary" data-jump-mode="daily">Play today's <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="daily-img">
+          <img src="https://picsum.photos/seed/snapbubbles-daily-2026/900/1100" alt="" loading="lazy" />
+          <div class="daily-img-tag" id="daily-seed-tag">SEED — TODAY</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── PULL QUOTE ─────────────────────── -->
+  <section class="pull-quote">
+    <div class="container">
+      <div class="pull-quote-inner">
+        <span class="pull-quote-mark" aria-hidden="true">"</span>
+        <p>Each pop is a complete event in miniature. You apply pressure, the membrane resists, then it gives way with a sharp acoustic snap. From the brain's perspective, that's a small action with an immediate, unambiguous payoff — <strong>a tiny dopamine hit.</strong></p>
+        <div class="pull-quote-attribution">— from <a href="/why-popping-bubble-wrap-relieves-stress.html">Why popping bubble wrap relieves stress</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── ARTICLES ─────────────────────── -->
+  <section class="articles">
+    <div class="container">
+      <div class="articles-head">
+        <div>
+          <span class="section-tag">— RECENT READS</span>
+          <h2 class="section-title">From the<br><em>Notebook.</em></h2>
+        </div>
+        <a href="/articles.html" class="articles-link">All ten articles →</a>
+      </div>
+      <div class="articles-grid">
+        <a class="article-card" href="/why-popping-bubble-wrap-relieves-stress.html">
+          <div class="article-img">
+            <img src="https://picsum.photos/seed/article-stress-relief/700/900" alt="" loading="lazy" />
+          </div>
+          <div class="article-meta">
+            <span class="tag">Science</span>
+            <span>5 MIN READ</span>
+          </div>
+          <h3>Why popping bubble wrap relieves stress</h3>
+          <p>The three psychological mechanisms — micro-rewards, predictable feedback, motor regulation — that make popping satisfying.</p>
+        </a>
+        <a class="article-card" href="/history-of-bubble-wrap.html">
+          <div class="article-img">
+            <img src="https://picsum.photos/seed/article-history-1957/700/900" alt="" loading="lazy" />
+          </div>
+          <div class="article-meta">
+            <span class="tag">History</span>
+            <span>6 MIN READ</span>
+          </div>
+          <h3>Invented as wallpaper in 1957</h3>
+          <p>Bubble wrap was a failed wallpaper, then failed greenhouse insulation, before accidentally becoming a packaging icon.</p>
+        </a>
+        <a class="article-card" href="/bubble-wrap-for-adhd-anxiety.html">
+          <div class="article-img">
+            <img src="https://picsum.photos/seed/article-adhd-focus/700/900" alt="" loading="lazy" />
+          </div>
+          <div class="article-meta">
+            <span class="tag">Practice</span>
+            <span>7 MIN READ</span>
+          </div>
+          <h3>Bubble wrap for ADHD, anxiety, focus</h3>
+          <p>How fidget tools actually work — the cognitive load mechanism that helps some brains focus and calms others.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── STORY ─────────────────────── -->
+  <section class="story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-img">
+          <img src="https://picsum.photos/seed/story-craft-2026/900/1100" alt="" loading="lazy" />
+        </div>
+        <div class="story-text">
+          <span class="section-tag">— THE STORY</span>
+          <h2>Why we<br>rebuilt a<br><em>dead 2005</em><br>domain.</h2>
+          <div class="story-divider" aria-hidden="true"></div>
+          <p><span class="dropcap">S</span>napbubbles.com ran a Flash-based bubble wrap game in the early 2000s. Adobe killed Flash in December 2020 and the site went dark. We rebuilt it in HTML5 — same core idea, same satisfying pop, but now with three modes, proper mobile support, and procedurally synthesized audio.</p>
+          <p>The bubble wrap design dates back to 1957, when two engineers in New Jersey were trying to invent textured wallpaper. It flopped. They pivoted to greenhouse insulation. That flopped too. Then IBM needed packaging for the 1401 computer. Suddenly bubble wrap had a market — and decades later, an accidental cultural object.</p>
+          <p>This site is one tiny extension of that lineage.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── DESKTOP-ONLY BOTTOM AD ─────────────────────── -->
+  <section class="ad-section">
+    <div class="container">
+      <div class="ad-slot ad-slot-desktop-bottom" aria-hidden="true">
+        <ins class="adsbygoogle"
+             style="display:block; width:100%; height:100%;"
+             data-ad-client="ca-pub-6647695511145371"
+             data-ad-slot="4280458729"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── FOOTER ─────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">Snap Bubbles</span>
+          </a>
+          <p>Virtual bubble wrap.<br>Made carefully.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Play</h4>
+          <a href="#game">Zen</a>
+          <a href="#game">Speed</a>
+          <a href="#game">Survival</a>
+          <a href="#daily">Daily challenge</a>
+        </div>
+        <div class="footer-col">
+          <h4>Read</h4>
+          <a href="/why-popping-bubble-wrap-relieves-stress.html">The science</a>
+          <a href="/history-of-bubble-wrap.html">The history</a>
+          <a href="/bubble-wrap-for-adhd-anxiety.html">For ADHD &amp; anxiety</a>
+          <a href="/asmr-and-bubble-wrap.html">ASMR &amp; sound</a>
+          <a href="/articles.html">All articles</a>
+        </div>
+        <div class="footer-col">
+          <h4>About</h4>
+          <a href="/how-to-play.html">How to play</a>
+          <a href="/bubble-wrap-appreciation-day.html">Bubble Wrap Day</a>
+          <a href="/bubble-wrap-for-kids-safety.html">For kids</a>
+          <div class="footer-meta" style="margin-top: 1.25rem">
+            <span>EST. 1957</span>
+            <span>REV. 2026</span>
+            <span>VOL. 03</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Snap Bubbles. The bubble wrap design dates to 1957. The original snapbubbles.com domain was registered in 2005. This rebuild is from 2026. Pop sounds are procedurally synthesized — no recordings, no compromises.</p>
+      </div>
     </div>
   </footer>
 
   <script src="game.js" defer></script>
   <script>
+    // Service worker registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
+
+    // Mode-card jumps: when a mode card or daily CTA is clicked, switch the
+    // game mode after scrolling. Game.js exposes a global hook.
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-jump-mode]');
+      if (!el) return;
+      const mode = el.dataset.jumpMode;
+      if (!mode) return;
+      // Smooth scroll happens via #game anchor; also trigger mode programmatically
+      setTimeout(() => {
+        if (window.snapbubbles && typeof window.snapbubbles.applyMode === 'function') {
+          window.snapbubbles.applyMode(mode, true);
+        }
+      }, 250);
+    });
+
+    // Daily date label + seed tag in the daily banner
+    (function() {
+      const d = new Date();
+      const opts = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+      const dateLabel = d.toLocaleDateString(undefined, opts);
+      const seed = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
+      const dateEl = document.getElementById('daily-date');
+      const tagEl = document.getElementById('daily-seed-tag');
+      if (dateEl) dateEl.textContent = dateLabel;
+      if (tagEl) tagEl.textContent = `SEED — ${seed}`;
+    })();
   </script>
 </body>
 </html>
