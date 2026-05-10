@@ -511,15 +511,29 @@ body {
   flex: 0 0 auto;
 }
 
-.footer-link {
-  color: var(--ink-dim);
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+/* Top subnav (How to Play / Articles) */
+.subnav {
+  display: flex;
+  gap: 22px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+  flex: 0 0 auto;
 }
-.footer-link:hover { color: var(--ink); }
+.subnav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 4px 0;
+}
+.subnav a:hover { color: var(--accent-strong); text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .subnav { padding: 7px 12px; gap: 18px; }
+  .subnav a { font-size: 13px; }
+}
 
 .ad-slot {
   display: flex;
