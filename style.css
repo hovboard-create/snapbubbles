@@ -365,6 +365,7 @@ body::before {
   .hero { min-height: 92svh; padding-top: 7rem; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { justify-content: center; }
+  .hero-scroll { display: none; }
 }
 
 /* ─────────────────────── GAME SECTION ─────────────────────── */
