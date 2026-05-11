@@ -2,7 +2,7 @@
   'use strict';
 
   // -------- Config --------
-  const SPEED_TARGET = 50;
+  const SPEED_TARGET = 20;
   const SURVIVAL_START_TIME = 30;
   const SURVIVAL_PER_POP = 0.5;
   const SURVIVAL_GOLD_BONUS = 5;
@@ -116,9 +116,9 @@
 
   const MODE_INFO = {
     zen: { title: 'Zen', desc: 'Just pop bubbles. The sheet refills itself — no goal, no timer.' },
-    speed: { title: 'Speed', desc: 'Race to pop 50 bubbles. Your best time saves automatically.' },
+    speed: { title: 'Speed', desc: 'Race to pop 20 bubbles. Your best time saves automatically.' },
     survival: { title: 'Survival', desc: 'Beat the countdown. Blue +0.5s, gold +5s, green poison −3s.' },
-    daily: { title: 'Daily Challenge', desc: 'Same 50 bubbles for everyone today. Race the clock.' },
+    daily: { title: 'Daily Challenge', desc: 'Same 20 bubbles for everyone today. Race the clock.' },
   };
   const statTimer = document.querySelector('[data-stat="timer"]');
   const statTarget = document.querySelector('[data-stat="target"]');
