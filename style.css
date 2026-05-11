@@ -1499,3 +1499,17 @@ body::before {
 }
 .article-cta .btn { text-decoration: none; }
 .btn-lg { font-size: 16px; padding: 1rem 2rem; }
+
+/* Affiliate link disclosure block */
+.affiliate-note {
+  background: rgba(232, 155, 124, 0.08);
+  border-left: 2px solid var(--terracotta-line);
+  padding: 0.85rem 1.15rem;
+  margin: 1.5rem 0 2rem;
+  font-family: var(--body);
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--ink-mute);
+  border-radius: 0 8px 8px 0;
+}

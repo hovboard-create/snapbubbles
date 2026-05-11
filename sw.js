@@ -1,4 +1,4 @@
-const CACHE = 'snapbubbles-v16';
+const CACHE = 'snapbubbles-v18';
 const ASSETS = [
   './',
   './index.html',
@@ -45,22 +45,43 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) {
-        // refresh in background
-        fetch(req).then((res) => {
-          if (res && res.ok) caches.open(CACHE).then((c) => c.put(req, res));
-        }).catch(() => {});
-        return cached;
-      }
-      return fetch(req).then((res) => {
-        if (res && res.ok && res.type === 'basic') {
+  // Navigation requests (HTML pages): network-first.
+  // This avoids the "response served by service worker has redirections" error
+  // that fires when an old cache held a redirected response (e.g. www -> apex).
+  if (req.mode === 'navigate' || req.destination === 'document') {
+    event.respondWith(
+      fetch(req).then((res) => {
+        // Only cache non-redirected, successful, same-origin responses
+        if (res && res.ok && !res.redirected && res.type === 'basic') {
           const clone = res.clone();
           caches.open(CACHE).then((c) => c.put(req, clone));
         }
         return res;
-      }).catch(() => caches.match('./index.html'));
+      }).catch(() =>
+        caches.match(req).then((m) => m || caches.match('./index.html'))
+      )
+    );
+    return;
+  }
+
+  // Static assets (CSS, JS, images): cache-first with background revalidation.
+  event.respondWith(
+    caches.match(req).then((cached) => {
+      if (cached) {
+        fetch(req).then((res) => {
+          if (res && res.ok && !res.redirected) {
+            caches.open(CACHE).then((c) => c.put(req, res));
+          }
+        }).catch(() => {});
+        return cached;
+      }
+      return fetch(req).then((res) => {
+        if (res && res.ok && res.type === 'basic' && !res.redirected) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, clone));
+        }
+        return res;
+      });
     })
   );
 });
