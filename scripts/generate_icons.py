@@ -100,103 +100,105 @@ def draw_bubble(size, *, padding_ratio=0.10, with_bg=True, with_glow=True):
 
 
 def draw_og_image(width=1200, height=630):
-    """Open Graph image for social sharing — bubble wrap field with wordmark."""
-    img = Image.new("RGBA", (width, height), (0, 0, 0, 255))
-    draw = ImageDraw.Draw(img)
+    """Open Graph image — centered composition so all social platforms
+    (Reddit, FB, Twitter, LinkedIn) crop it cleanly. Bubble field fills the
+    canvas; dark vignette in center for text contrast; wordmark + tagline +
+    URL stacked at center."""
+    img = Image.new("RGBA", (width, height), (15, 18, 23, 255))
 
-    # Background gradient — same teal as the game
-    for y in range(height):
-        t = y / height
-        r = int(lerp(0x2c, 0x0a, t))
-        g = int(lerp(0x73, 0x2c, t))
-        b = int(lerp(0x82, 0x36, t))
-        draw.line([(0, y), (width, y)], fill=(r, g, b, 255))
-
-    # Tile bubbles across the surface
-    bubble_size = 110
+    # Tile bubbles across the surface (full bleed, offset rows for organic packing)
+    bubble_size = 100
     gap = 6
     cols = width // (bubble_size + gap) + 2
     rows = height // (bubble_size + gap) + 2
     bubble = draw_bubble(bubble_size, padding_ratio=0.04, with_bg=False, with_glow=False)
     for r in range(rows):
         for c in range(cols):
-            x = c * (bubble_size + gap)
+            x_off = (bubble_size + gap) // 2 if r % 2 == 1 else 0
+            x = c * (bubble_size + gap) - x_off
             y = r * (bubble_size + gap)
             img.alpha_composite(bubble, (x, y))
 
-    # Darken right side for text contrast
+    # Dark vignette — strong center darkening fading to edges so the bubble
+    # pattern still reads at the frame but text is readable in the middle.
     overlay = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
-    for x in range(width):
-        t = max(0.0, (x / width - 0.25) / 0.75)
-        a = int(t * t * 200)
-        od.line([(x, 0), (x, height)], fill=(8, 25, 35, a))
+    cx, cy = width / 2, height / 2
+    for y in range(height):
+        for x in range(0, width, 4):
+            # Distance from center, normalized — clamp before exponent so
+            # we don't end up with complex numbers when d > 1.
+            dx = (x - cx) / cx
+            dy = (y - cy) / cy
+            d = math.sqrt(dx * dx + dy * dy * 0.55)
+            falloff = max(0.0, 1.0 - d)
+            a = int(230 * (falloff ** 1.4))
+            if a > 0:
+                od.rectangle((x, y, x + 4, y + 1), fill=(8, 16, 24, a))
     img = Image.alpha_composite(img, overlay)
 
-    # Wordmark text — "Snap Bubbles" + tagline + CTA button
     draw = ImageDraw.Draw(img)
-    title = "Snap Bubbles"
-    tagline = "Virtual Bubble Wrap"
-    sub = "Zen / Speed / Survival"
-    cta = "Play Free →"
-    cta_url = "snapbubbles.com"
 
-    # Try to load nicer fonts; fall back to default
+    # Fonts — system sans, used at print-large sizes. The website uses Fraunces
+    # serif but for social preview thumbnails, sans renders cleaner small.
     title_font = None
     tagline_font = None
-    sub_font = None
-    cta_font = None
+    line_font = None
     url_font = None
     candidate_fonts = [
-        "/System/Library/Fonts/SFNS.ttf",
-        "/System/Library/Fonts/Helvetica.ttc",
         "/System/Library/Fonts/Avenir Next.ttc",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/System/Library/Fonts/SFNS.ttf",
     ]
     for path in candidate_fonts:
         if os.path.exists(path):
             try:
                 from PIL import ImageFont
-                title_font = ImageFont.truetype(path, 110)
-                tagline_font = ImageFont.truetype(path, 46)
-                sub_font = ImageFont.truetype(path, 32)
-                cta_font = ImageFont.truetype(path, 38)
-                url_font = ImageFont.truetype(path, 24)
+                title_font = ImageFont.truetype(path, 130)
+                tagline_font = ImageFont.truetype(path, 38)
+                line_font = ImageFont.truetype(path, 22)
+                url_font = ImageFont.truetype(path, 26)
                 break
             except Exception:
                 continue
 
-    title_x = int(width * 0.55)
-    title_y = int(height * 0.30)
+    def measure(text, font):
+        bbox = draw.textbbox((0, 0), text, font=font)
+        return (bbox[2] - bbox[0], bbox[3] - bbox[1])
+
+    def draw_centered(text, font, y, color):
+        tw, th = measure(text, font)
+        x = (width - tw) // 2
+        draw.text((x, y), text, fill=color, font=font)
+        return th
+
     if title_font:
-        draw.text((title_x, title_y), title, fill=(255, 255, 255, 255), font=title_font)
-        draw.text((title_x, title_y + 130), tagline, fill=(190, 220, 235, 255), font=tagline_font)
-        draw.text((title_x, title_y + 200), sub, fill=(140, 180, 200, 220), font=sub_font)
+        # Title: "Snap Bubbles" — big, centered, cream
+        title = "Snap Bubbles"
+        title_y = int(height * 0.30)
+        title_h = draw_centered(title, title_font, title_y, (245, 241, 234, 255))
 
-        # CTA pill — rounded button with "Play Free →"
-        cta_x0 = title_x
-        cta_y0 = title_y + 280
-        cta_w = 280
-        cta_h = 76
-        draw.rounded_rectangle(
-            (cta_x0, cta_y0, cta_x0 + cta_w, cta_y0 + cta_h),
-            radius=14,
-            fill=(47, 129, 247, 255),
+        # Terracotta accent line below the title
+        line_y = title_y + title_h + 26
+        line_half = 50
+        draw.rectangle(
+            (cx - line_half, line_y, cx + line_half, line_y + 2),
+            fill=(232, 155, 124, 255),
         )
-        # Center text within pill
-        try:
-            bbox = draw.textbbox((0, 0), cta, font=cta_font)
-            tw = bbox[2] - bbox[0]
-            th = bbox[3] - bbox[1]
-        except Exception:
-            tw, th = cta_font.getsize(cta) if cta_font else (140, 38)
-        tx = cta_x0 + (cta_w - tw) // 2
-        ty = cta_y0 + (cta_h - th) // 2 - 4
-        draw.text((tx, ty), cta, fill=(255, 255, 255, 255), font=cta_font)
 
-        # URL line below the CTA
-        draw.text((title_x, cta_y0 + cta_h + 16), cta_url, fill=(160, 200, 220, 200), font=url_font)
-    else:
-        draw.text((title_x, title_y), title, fill=(255, 255, 255, 255))
+        # Tagline
+        tagline = "Virtual Bubble Wrap"
+        tagline_y = line_y + 28
+        draw_centered(tagline, tagline_font, tagline_y, (220, 213, 200, 255))
+
+        # Modes — small, spaced, muted
+        modes_y = tagline_y + 64
+        modes = "ZEN   ·   SPEED   ·   SURVIVAL   ·   DAILY"
+        draw_centered(modes, line_font, modes_y, (154, 162, 176, 230))
+
+        # URL — terracotta accent
+        url_y = modes_y + 56
+        draw_centered("snapbubbles.com", url_font, url_y, (232, 155, 124, 255))
 
     return img
 
