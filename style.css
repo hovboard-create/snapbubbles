@@ -249,7 +249,7 @@ body::before {
   position: relative;
   min-height: 100svh;
   display: grid;
-  align-items: end;
+  align-items: center;
   padding: 8rem 0 4rem;
   overflow: hidden;
   background: var(--bg);
