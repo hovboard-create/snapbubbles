@@ -1513,3 +1513,25 @@ body::before {
   color: var(--ink-mute);
   border-radius: 0 8px 8px 0;
 }
+
+/* In-article ad block (between content and Related section) */
+.in-article-ad {
+  margin: 3rem 0;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.in-article-ad .ad-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.85rem;
+}
+.in-article-ad ins {
+  display: block;
+  min-height: 90px;
+}

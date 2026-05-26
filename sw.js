@@ -1,4 +1,4 @@
-const CACHE = 'snapbubbles-v20';
+const CACHE = 'snapbubbles-v21';
 const ASSETS = [
   './',
   './index.html',
